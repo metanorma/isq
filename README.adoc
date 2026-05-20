@@ -1,0 +1,396 @@
+= isq: ISO/IEC 80000 domain classes and RDF export
+:toc:
+:toclevels: 2
+
+== Purpose
+
+isq provides
+https://www.iso.org/standard/30669.html[ISO/IEC 80000] (International System of
+Quantities) domain classes and RDF export for Ruby. It extends the
+https://github.com/metanorma/sdu-smart[SmartSDU Core Ontology] (`sdu_smart` gem)
+with ISQ-specific classes and generates per-part Turtle (TTL) and JSON-LD
+exports from YAML source data.
+
+The gem was extracted from the `isq-smart` monorepo as a standalone library.
+
+Key features:
+
+* **Domain classes**: Quantity, Unit, MathConcept extending SmartSDU::TermEntry
+* **RDF serialization**: Turtle and JSON-LD output via lutaml-model
+* **Bulk export**: Rake task for generating per-part TTL/JSON-LD from YAML
+* **Ontology alignment**: SKOS, SKOS-XL, Dublin Core, and SMART predicates
+
+== Installation
+
+Add to your Gemfile:
+
+[source,ruby]
+----
+gem "isq", "~> 0.1.0"
+----
+
+Then execute:
+
+[source,bash]
+----
+$ bundle install
+----
+
+Or install directly:
+
+[source,bash]
+----
+$ gem install isq
+----
+
+== Quick start
+
+=== Use domain classes
+
+[source,ruby]
+----
+require "isq"
+
+# Create a quantity
+quantity = Isq::Quantity.new(
+  id: "length",
+  identifier: "4-1",
+  pref_label: "length",
+  notation: %w[l L],
+  definition: "extent of a one-dimensional region in space",
+  has_unit: ["isoiec80000:unit-m"],
+)
+quantity.to_turtle   # => Turtle string
+quantity.to_jsonld   # => JSON-LD hash
+
+# Create a unit
+unit = Isq::Unit.new(
+  id: "unit-m",
+  pref_label: "metre",
+  notation: ["m"],
+)
+unit.to_turtle
+
+# Create a math concept
+concept = Isq::MathConcept.new(
+  id: "scalar",
+  identifier: "2-2",
+  pref_label: "scalar",
+  definition: "real number which is a measure of magnitude",
+)
+concept.to_turtle
+----
+
+=== Run the export task
+
+[source,bash]
+----
+bundle install
+bundle exec rake export:all   # generate TTL/JSON-LD (requires YAML source data)
+bundle exec rake spec         # run tests
+----
+
+== Domain classes
+
+Three classes extend `SduSmart::TermEntry` with ISO/IEC 80000-specific
+semantics and RDF mappings.
+
+=== Quantity
+
+Physical quantities (length, mass, force, etc.) with optional unit references.
+
+Attributes: `identifier`, `pref_label`, `notation` (collection),
+`definition`, `note`, `has_unit` (collection).
+
+[source,ruby]
+----
+q = Isq::Quantity.new(
+  id: "t3-1.1",
+  identifier: "3-1.1",
+  pref_label: "length",
+  notation: %w[l L],
+  definition: "linear extent in space between any two points",
+  bindingness_type: "normative",
+  is_part_of: "isoiec80000:part-3",
+  has_unit: ["isoiec80000:unit-m"],
+)
+q.to_turtle
+# includes: a isoiec80000:Quantity
+#           dcterms:identifier "3-1.1"
+#           skos:prefLabel
+#           skos:notation
+#           skos:definition
+#           isoiec80000:hasUnit isoiec80000:unit-m
+#           dcterms:isPartOf isoiec80000:part-3
+----
+
+=== Unit
+
+Measurement units (metre, kilogram, pascal, etc.).
+
+Attributes: `pref_label`, `notation` (collection).
+
+[source,ruby]
+----
+u = Isq::Unit.new(
+  id: "unit-m",
+  pref_label: "metre",
+  notation: ["m"],
+  bindingness_type: "normative",
+)
+u.to_turtle
+# includes: a isoiec80000:Unit
+#           skos:prefLabel "metre"
+#           skos:notation "m"
+----
+
+=== MathConcept
+
+Mathematical concepts from Part 2 (number, function, scalar, etc.).
+
+Attributes: `identifier`, `pref_label`, `notation` (collection),
+`definition`, `note`.
+
+[source,ruby]
+----
+mc = Isq::MathConcept.new(
+  id: "t2-1.1",
+  identifier: "2-1.1",
+  pref_label: "number",
+  definition: "object of thought",
+  bindingness_type: "normative",
+  is_part_of: "isoiec80000:part-2",
+)
+mc.to_turtle
+# includes: a isoiec80000:MathConcept
+#           dcterms:identifier "2-1.1"
+#           skos:definition
+----
+
+=== Class hierarchy
+
+[source]
+----
+SduSmart::Entity
+├── SduSmart::TermEntry
+│   ├── Isq::Quantity
+│   ├── Isq::Unit
+│   └── Isq::MathConcept
+├── SduSmart::Term
+├── SduSmart::PublicationDocument
+├── SduSmart::Provision (abstract)
+│   ├── Statement
+│   ├── Requirement
+│   └── ...
+├── SduSmart::Agent
+└── SduSmart::Activity
+----
+
+Each domain class maps to `isoiec80000:` namespace types and uses predicates
+from SKOS, SKOS-XL, Dublin Core, and SMART ontologies.
+
+== RDF export
+
+The `rake export:all` task reads YAML source data and generates per-part
+Turtle and JSON-LD files.
+
+The export task bypasses the domain classes and directly generates RDF from
+YAML. This allows it to produce additional structures (PublicationDocument
+instances, skosxl Term instances for designations and symbols, per-entry
+files) that go beyond what individual domain class serialization provides.
+
+=== Prerequisites
+
+Requires the `iso-iec-80000` sibling repo for YAML source data:
+
+[source,bash]
+----
+cd .. && git clone https://github.com/metanorma/iso-iec-80000.git
+----
+
+=== Usage
+
+[source,bash]
+----
+bundle exec rake export:all
+----
+
+=== Environment variables
+
+[cols="1,3"]
+|===
+| Variable | Default
+
+| `ISQ_DATASET_DIR`
+| `../iso-iec-80000/sources/dataset`
+
+| `ISQ_EXPORT_DIR`
+| `../browser/public/exports`
+|===
+
+=== Output structure
+
+```
+ISQ_EXPORT_DIR/
+├── iso80000-all.ttl           # Full bulk Turtle export
+├── iso80000-all.jsonld        # Full bulk JSON-LD export
+├── manifest.json              # Generation metadata
+├── part-3/                    # Per-part directory
+│   ├── index.ttl              # Part-level Turtle
+│   ├── index.jsonld           # Part-level JSON-LD
+│   ├── length.ttl             # Per-entry Turtle
+│   └── length.jsonld          # Per-entry JSON-LD
+├── part-4/
+└── ...
+```
+
+=== Covered parts
+
+[cols="1,2"]
+|===
+| Part | Title
+
+| 2
+| Mathematics
+
+| 3
+| Space and Time
+
+| 4
+| Mechanics
+
+| 5
+| Thermodynamics
+
+| 6
+| Electromagnetism
+
+| 7
+| Light and Radiation
+
+| 8
+| Acoustics
+
+| 9
+| Physical Chemistry
+
+| 10
+| Atomic and Nuclear
+
+| 11
+| Characteristic Numbers
+
+| 12
+| Condensed Matter
+
+| 13
+| Information Science
+|===
+
+=== RDF namespaces
+
+[cols="1,3"]
+|===
+| Prefix | IRI
+
+| `smart:`
+| `https://w3id.org/standards/smart/ontologies/core/`
+
+| `isoiec80000:`
+| `https://w3id.org/standards/isoiec80000/ontologies/core/`
+|===
+
+== Architecture
+
+isq has two independent layers for RDF generation:
+
+**Domain classes** (`lib/isq/`): Extend `SduSmart::TermEntry` via
+`lutaml-model` attributes with an `rdf` DSL block. Used for individual
+instance serialization (`to_turtle`, `to_jsonld`). Each class declares
+attribute-to-predicate mappings with namespace-qualified predicates.
+
+**Export rake task** (`lib/tasks/export.rake`): Standalone task that directly
+generates RDF from YAML data *without* using the domain classes. Handles:
+
+* Turtle and JSON-LD generation
+* Per-part splitting and bulk aggregation
+* Unit deduplication across entries
+* PublicationDocument stubs per part
+* skosxl Term instances for designations and symbols
+* Manifest with generation metadata
+
+=== Repository structure
+
+[cols="1,4"]
+|===
+| Path | Description
+
+| `lib/isq.rb`
+| Entry point; autoloads domain classes.
+
+| `lib/isq/quantity.rb`
+| `Isq::Quantity` — physical quantity with units.
+
+| `lib/isq/unit.rb`
+| `Isq::Unit` — measurement unit.
+
+| `lib/isq/math_concept.rb`
+| `Isq::MathConcept` — mathematical concept.
+
+| `lib/isq/version.rb`
+| Version constant.
+
+| `lib/tasks/export.rake`
+| `rake export:all` — YAML to TTL/JSON-LD generation.
+
+| `spec/isq/isoiec80000_spec.rb`
+| Domain class instantiation and RDF output specs.
+
+| `spec/isq/export_validation_spec.rb`
+| Validates generated exports for RDF correctness.
+|===
+
+=== Dependencies
+
+[cols="1,2"]
+|===
+| Gem | Purpose
+
+| `sdu_smart` ~> 0.1.0
+| SmartSDU Core Ontology — base classes, RDF infrastructure, namespace constants
+
+| `lutaml-model` ~> 0.8.0
+| Attribute DSL and RDF serialization (`to_turtle`, `to_jsonld`)
+|===
+
+== Development
+
+After checking out the repo, run `bundle install` to install dependencies.
+Then run `bundle exec rake spec` to run the tests.
+
+[cols="2,3"]
+|===
+| Command | Description
+
+| `bundle exec rake spec`
+| Run all tests
+
+| `bundle exec rspec spec/isq/isoiec80000_spec.rb:12`
+| Run single test by line number
+
+| `bundle exec rake export:all`
+| Generate TTL/JSON-LD exports
+
+| `bundle exec rake build`
+| Build the gem
+|===
+
+== Contributing
+
+Bug reports and pull requests are welcome on GitHub at
+https://github.com/metanorma/isq.
+
+== Copyright and license
+
+Copyright Ribose. https://opensource.org/licenses/BSD-2-Clause[BSD-2-Clause
+License].

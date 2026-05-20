@@ -1,0 +1,15 @@
+---
+- part: 2-5
+  edition: '2019'
+  id: t2-5.1
+  num: 2-5.1
+  designations:
+  - designation:
+      en:
+        text: conjunction
+        index_as:
+        - conjunction
+  def:
+    en: conjunction of p and q
+  symbols:
+  - p ^^ q

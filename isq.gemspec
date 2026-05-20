@@ -24,8 +24,11 @@ Gem::Specification.new do |spec|
   spec.metadata["rubygems_mfa_required"] = "true"
 
   spec.files = Dir.glob("lib/**/*.rb") + Dir.glob("lib/tasks/*.rake")
+  spec.bindir = "exe"
+  spec.executables = ["isq"]
   spec.require_paths = ["lib"]
 
   spec.add_dependency "sdu_smart", "~> 0.1.0"
   spec.add_dependency "lutaml-model", "~> 0.8.0"
+  spec.add_dependency "thor", "~> 1.3"
 end

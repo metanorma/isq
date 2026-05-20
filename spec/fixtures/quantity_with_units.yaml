@@ -1,0 +1,19 @@
+---
+- part: '3'
+  edition: '2019'
+  id: t3-4.1
+  num: 3-4.1
+  designations:
+  - designation:
+      en:
+        text: velocity
+        index_as:
+        - velocity
+  symbols:
+  - v
+  def:
+    en: distance divided by time
+  units:
+  - en: metre per second
+    symbol:
+    - m/s

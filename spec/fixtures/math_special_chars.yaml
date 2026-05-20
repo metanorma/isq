@@ -1,0 +1,15 @@
+---
+- part: 2-6
+  edition: '2019'
+  id: t2-6.1
+  num: 2-6.1
+  designations:
+  - designation:
+      en:
+        text: universal quantification
+        index_as:
+        - universal quantification
+  def:
+    en: for all x in A, p of x
+  symbols:
+  - AA x in A p(x)

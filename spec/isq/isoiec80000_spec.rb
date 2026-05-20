@@ -44,6 +44,162 @@ RSpec.describe Isq do
       expect(jsonld).to include("prefLabel")
       expect(jsonld).to include("definition")
     end
+
+    it "parses from YAML" do
+      yaml = <<~YAML
+        ---
+        - part: '3'
+          edition: '2019'
+          id: t3-1.1
+          num: 3-1.1
+          designations:
+          - designation:
+              en:
+                text: length
+                index_as:
+                - length
+          symbols:
+          - l
+          - L
+          def:
+            en: linear extent in space between any two points
+          units:
+          - en: metre
+            symbol:
+            - m
+          remarks:
+            en: Length remark.
+      YAML
+
+      entries = Isq::Quantity.from_yaml(yaml)
+      q = entries.first
+
+      expect(q.id).to eq("t3-1.1")
+      expect(q.identifier).to eq("3-1.1")
+      expect(q.part).to eq("3")
+      expect(q.edition).to eq("2019")
+      expect(q.pref_label).to eq("length")
+      expect(q.definition).to eq("linear extent in space between any two points")
+      expect(q.note).to eq("Length remark.")
+      expect(q.has_unit).to eq(["isoiec80000:unit-m"])
+      expect(q.designations.length).to eq(1)
+      expect(q.designations.first.text).to eq("length")
+      expect(q.symbols.length).to eq(2)
+      expect(q.symbols.map(&:text)).to eq(%w[l L])
+      expect(q.notation).to eq(%w[l L])
+    end
+
+    it "generates Turtle with member Term instances from YAML" do
+      yaml = <<~YAML
+        ---
+        - part: '3'
+          edition: '2019'
+          id: t3-1.1
+          num: 3-1.1
+          designations:
+          - designation:
+              en:
+                text: length
+                index_as:
+                - length
+          symbols:
+          - l
+          def:
+            en: linear extent in space
+      YAML
+
+      q = Isq::Quantity.from_yaml(yaml).first
+      turtle = q.to_turtle
+
+      expect(turtle).to include("a isoiec80000:Quantity")
+      expect(turtle).to include("a skosxl:Label")
+      expect(turtle).to include('skosxl:literalForm "length"@en')
+      expect(turtle).to include('skosxl:literalForm "l"@en')
+      expect(turtle).to include("smart:hasTermFormType smart:fullForm")
+      expect(turtle).to include("smart:hasTermFormType smart:symbol")
+    end
+
+    it "handles entry with no units" do
+      yaml = <<~YAML
+        ---
+        - part: '3'
+          id: t3-2
+          num: 3-2
+          designations:
+          - designation:
+              en:
+                text: area
+          def:
+            en: extent of a surface
+      YAML
+
+      q = Isq::Quantity.from_yaml(yaml).first
+      expect(q.has_unit).to be_empty
+    end
+
+    it "handles entry with no remarks" do
+      yaml = <<~YAML
+        ---
+        - part: '3'
+          id: t3-1.1
+          num: 3-1.1
+          designations:
+          - designation:
+              en:
+                text: length
+          def:
+            en: linear extent in space
+      YAML
+
+      q = Isq::Quantity.from_yaml(yaml).first
+      expect(q.note).to be_nil
+    end
+
+    it "handles entry with no symbols" do
+      yaml = <<~YAML
+        ---
+        - part: '3'
+          id: t3-99
+          num: 3-99
+          designations:
+          - designation:
+              en:
+                text: something
+          def:
+            en: some definition
+      YAML
+
+      q = Isq::Quantity.from_yaml(yaml).first
+      expect(q.symbols).to be_empty
+      expect(q.notation).to be_empty
+    end
+
+    it "handles multiple designations" do
+      yaml = <<~YAML
+        ---
+        - part: '3'
+          id: t3-1.2
+          num: 3-1.2
+          designations:
+          - designation:
+              en:
+                text: width
+                index_as:
+                - width
+          - designation:
+              en:
+                text: breadth
+                index_as:
+                - breadth
+          def:
+            en: a distance
+      YAML
+
+      q = Isq::Quantity.from_yaml(yaml).first
+      expect(q.designations.length).to eq(2)
+      expect(q.pref_label).to eq("width")
+      expect(q.designations.last.text).to eq("breadth")
+    end
   end
 
   describe "Unit" do
@@ -74,6 +230,19 @@ RSpec.describe Isq do
       expect(jsonld).to include("isoiec80000:Unit")
       expect(jsonld).to include("metre")
     end
+
+    it "parses from YAML" do
+      yaml = <<~YAML
+        ---
+        en: metre
+        symbol:
+        - m
+      YAML
+
+      u = Isq::Unit.from_yaml(yaml)
+      expect(u.pref_label).to eq("metre")
+      expect(u.notation).to eq(["m"])
+    end
   end
 
   describe "MathConcept" do
@@ -103,6 +272,63 @@ RSpec.describe Isq do
       )
       jsonld = mc.to_jsonld
       expect(jsonld).to include("isoiec80000:MathConcept")
+    end
+
+    it "parses from YAML" do
+      yaml = <<~YAML
+        ---
+        - part: 2-5
+          edition: '2019'
+          id: t2-5.1
+          num: 2-5.1
+          designations:
+          - designation:
+              en:
+                text: conjunction
+                index_as:
+                - conjunction
+          def:
+            en: conjunction of p and q
+          symbols:
+          - p ^^ q
+      YAML
+
+      entries = Isq::MathConcept.from_yaml(yaml)
+      mc = entries.first
+
+      expect(mc.id).to eq("t2-5.1")
+      expect(mc.identifier).to eq("2-5.1")
+      expect(mc.part).to eq("2-5")
+      expect(mc.pref_label).to eq("conjunction")
+      expect(mc.definition).to eq("conjunction of p and q")
+      expect(mc.symbols.length).to eq(1)
+      expect(mc.symbols.first.text).to eq("p ^^ q")
+      expect(mc.notation).to eq(["p ^^ q"])
+    end
+
+    it "generates Turtle with member Term instances from YAML" do
+      yaml = <<~YAML
+        ---
+        - part: 2-5
+          id: t2-5.1
+          num: 2-5.1
+          designations:
+          - designation:
+              en:
+                text: conjunction
+          def:
+            en: conjunction of p and q
+          symbols:
+          - p ^^ q
+      YAML
+
+      mc = Isq::MathConcept.from_yaml(yaml).first
+      turtle = mc.to_turtle
+
+      expect(turtle).to include("a isoiec80000:MathConcept")
+      expect(turtle).to include("a skosxl:Label")
+      expect(turtle).to include('skosxl:literalForm "conjunction"@en')
+      expect(turtle).to include('skosxl:literalForm "p ^^ q"@en')
     end
   end
 
