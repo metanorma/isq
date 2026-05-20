@@ -23,4 +23,4 @@ jobs:
     with:
       next_version: ${{ github.event.inputs.next_version }}
     secrets:
-      rubygems-api-key: ${{ secrets.LUTAML_CI_RUBYGEMS_API_KEY }}
+      rubygems-api-key: ${{ secrets.METANORMA_CI_RUBYGEMS_API_KEY }}
