@@ -1,0 +1,18 @@
+---
+- part: '3'
+  edition: '2019'
+  id: t3-1.2
+  num: 3-1.2
+  designations:
+  - designation:
+      en:
+        text: width
+        index_as:
+        - width
+  - designation:
+      en:
+        text: breadth
+        index_as:
+        - breadth
+  def:
+    en: extent of a surface in a direction perpendicular to the direction of length

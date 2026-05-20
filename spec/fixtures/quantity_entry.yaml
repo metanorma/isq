@@ -1,0 +1,22 @@
+---
+- part: '3'
+  edition: '2019'
+  id: t3-1.1
+  num: 3-1.1
+  designations:
+  - designation:
+      en:
+        text: length
+        index_as:
+        - length
+  symbols:
+  - l
+  - L
+  def:
+    en: linear extent in space between any two points
+  units:
+  - en: metre
+    symbol:
+    - m
+  remarks:
+    en: Length does not need to be measured along a straight line.
