@@ -11,14 +11,14 @@ module Isq
     end
 
     rdf do
-      namespace SduSmart::Rdf::Namespaces::IsoIec80000Namespace,
+      namespace SduSmart::Rdf::Namespaces::IsqNamespace,
                 SduSmart::Rdf::Namespaces::SmartNamespace,
                 Lutaml::Rdf::Namespaces::DctermsNamespace,
                 Lutaml::Rdf::Namespaces::SkosNamespace
 
-      subject { |m| "https://w3id.org/standards/isoiec80000/ontologies/core/#{m.id}" }
+      subject { |m| "https://w3id.org/standards/isq/ontologies/core/#{m.id}" }
 
-      type ["isoiec80000:Unit", "smart:TermEntry"]
+      type ["isq:Unit", "smart:TermEntry"]
 
       predicate :prefLabel,
                 namespace: Lutaml::Rdf::Namespaces::SkosNamespace,

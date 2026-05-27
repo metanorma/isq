@@ -25,7 +25,7 @@ module Isq
       namespace SduSmart::Rdf::Namespaces::SmartNamespace,
                 Lutaml::Rdf::Namespaces::DctermsNamespace
 
-      subject { |m| "https://w3id.org/standards/isoiec80000/ontologies/core/part-#{m.part_number}" }
+      subject { |m| "https://w3id.org/standards/isq/ontologies/core/part-#{m.part_number}" }
 
       type "smart:PublicationDocument"
 

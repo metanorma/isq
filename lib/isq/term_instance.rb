@@ -14,7 +14,7 @@ module Isq
       namespace SduSmart::Rdf::Namespaces::SkosXlNamespace,
                 SduSmart::Rdf::Namespaces::SmartNamespace
 
-      subject { |m| "https://w3id.org/standards/isoiec80000/ontologies/core/#{m.id}" }
+      subject { |m| "https://w3id.org/standards/isq/ontologies/core/#{m.id}" }
 
       type ["skosxl:Label", "smart:Term"]
 

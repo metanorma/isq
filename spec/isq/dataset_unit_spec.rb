@@ -106,7 +106,7 @@ RSpec.describe Isq::Dataset do
     describe "#unique_units_for_part" do
       it "deduplicates units within a part" do
         units = dataset.unique_units_for_part("3")
-        expect(units).to eq(%w[isoiec80000:unit-m isoiec80000:unit-m/s])
+        expect(units).to eq(%w[isq:unit-m isq:unit-m/s])
       end
 
       it "returns empty array for part with no units" do
@@ -127,7 +127,7 @@ RSpec.describe Isq::Dataset do
       it "stores unit name and symbols from YAML" do
         length_entry = entries.first
         expect(length_entry.unit_data).to include(
-          "isoiec80000:unit-m" => { name: "metre", symbols: ["m"] },
+          "isq:unit-m" => { name: "metre", symbols: ["m"] },
         )
       end
 
@@ -137,8 +137,8 @@ RSpec.describe Isq::Dataset do
           map.merge!(e.unit_data)
         end
         expect(all_unit_data).to include(
-          "isoiec80000:unit-m" => { name: "metre", symbols: ["m"] },
-          "isoiec80000:unit-m/s" => { name: "metre per second", symbols: ["m/s"] },
+          "isq:unit-m" => { name: "metre", symbols: ["m"] },
+          "isq:unit-m/s" => { name: "metre per second", symbols: ["m/s"] },
         )
       end
     end

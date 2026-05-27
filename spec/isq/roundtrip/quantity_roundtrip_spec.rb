@@ -42,13 +42,13 @@ RSpec.describe "Quantity round-trip" do
     end
 
     it "preserves unit references" do
-      expect(quantity.has_unit).to eq(["isoiec80000:unit-m"])
+      expect(quantity.has_unit).to eq(["isq:unit-m"])
     end
 
     it "generates Turtle with Quantity type and predicates" do
       turtle = quantity.to_turtle
 
-      expect(turtle).to include("a isoiec80000:Quantity")
+      expect(turtle).to include("a isq:Quantity")
       expect(turtle).to include('dcterms:identifier "3-1.1"')
       expect(turtle).to include('skos:definition "linear extent in space between any two points"@en')
       expect(turtle).to include('skos:note "Length does not need to be measured along a straight line."@en')
@@ -73,7 +73,7 @@ RSpec.describe "Quantity round-trip" do
     it "generates JSON-LD" do
       jsonld = quantity.to_jsonld
 
-      expect(jsonld).to include("isoiec80000:Quantity")
+      expect(jsonld).to include("isq:Quantity")
       expect(jsonld).to include("prefLabel")
       expect(jsonld).to include("definition")
     end
@@ -101,7 +101,7 @@ RSpec.describe "Quantity round-trip" do
     let(:quantity) { load_fixture("quantity_with_units.yaml") }
 
     it "preserves unit reference with compound symbol" do
-      expect(quantity.has_unit).to eq(["isoiec80000:unit-m/s"])
+      expect(quantity.has_unit).to eq(["isq:unit-m/s"])
     end
 
     it "preserves single symbol" do
