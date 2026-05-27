@@ -42,7 +42,7 @@ RSpec.describe "MathConcept round-trip" do
     it "generates Turtle with MathConcept type" do
       turtle = concept.to_turtle
 
-      expect(turtle).to include("a isoiec80000:MathConcept")
+      expect(turtle).to include("a isq:MathConcept")
       expect(turtle).to include('dcterms:identifier "2-5.1"')
       expect(turtle).to include('skos:definition "conjunction of p and q"@en')
     end
@@ -60,7 +60,7 @@ RSpec.describe "MathConcept round-trip" do
     it "generates JSON-LD" do
       jsonld = concept.to_jsonld
 
-      expect(jsonld).to include("isoiec80000:MathConcept")
+      expect(jsonld).to include("isq:MathConcept")
       expect(jsonld).to include("definition")
     end
   end

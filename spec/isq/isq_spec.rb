@@ -8,7 +8,7 @@ RSpec.describe Isq do
       expect(Isq::Quantity < SduSmart::TermEntry).to be true
     end
 
-    it "generates Turtle with isoiec80000:Quantity type" do
+    it "generates Turtle with isq:Quantity type" do
       q = Isq::Quantity.new(
         id: "t3-1.1",
         identifier: "3-1.1",
@@ -16,17 +16,17 @@ RSpec.describe Isq do
         notation: %w[l L],
         definition: "linear extent in space between any two points",
         bindingness_type: "normative",
-        is_part_of: "isoiec80000:part-3",
-        has_unit: ["isoiec80000:unit-m"],
+        is_part_of: "isq:part-3",
+        has_unit: ["isq:unit-m"],
       )
       turtle = q.to_turtle
-      expect(turtle).to include("a isoiec80000:Quantity")
+      expect(turtle).to include("a isq:Quantity")
       expect(turtle).to include("dcterms:identifier")
       expect(turtle).to include("skos:prefLabel")
       expect(turtle).to include("skos:notation")
       expect(turtle).to include("skos:definition")
       expect(turtle).to include("smart:hasBindingnessType")
-      expect(turtle).to include("isoiec80000:hasUnit")
+      expect(turtle).to include("isq:hasUnit")
       expect(turtle).to include("dcterms:isPartOf")
     end
 
@@ -37,10 +37,10 @@ RSpec.describe Isq do
         pref_label: "length",
         definition: "linear extent in space between any two points",
         bindingness_type: "normative",
-        is_part_of: "isoiec80000:part-3",
+        is_part_of: "isq:part-3",
       )
       jsonld = q.to_jsonld
-      expect(jsonld).to include("isoiec80000:Quantity")
+      expect(jsonld).to include("isq:Quantity")
       expect(jsonld).to include("prefLabel")
       expect(jsonld).to include("definition")
     end
@@ -81,7 +81,7 @@ RSpec.describe Isq do
       expect(q.pref_label).to eq("length")
       expect(q.definition).to eq("linear extent in space between any two points")
       expect(q.note).to eq("Length remark.")
-      expect(q.has_unit).to eq(["isoiec80000:unit-m"])
+      expect(q.has_unit).to eq(["isq:unit-m"])
       expect(q.designations.length).to eq(1)
       expect(q.designations.first.text).to eq("length")
       expect(q.symbols.length).to eq(2)
@@ -111,7 +111,7 @@ RSpec.describe Isq do
       q = Isq::Quantity.from_yaml(yaml).first
       turtle = q.to_turtle
 
-      expect(turtle).to include("a isoiec80000:Quantity")
+      expect(turtle).to include("a isq:Quantity")
       expect(turtle).to include("a skosxl:Label")
       expect(turtle).to include('skosxl:literalForm "length"@en')
       expect(turtle).to include('skosxl:literalForm "l"@en')
@@ -207,7 +207,7 @@ RSpec.describe Isq do
       expect(Isq::Unit < SduSmart::TermEntry).to be true
     end
 
-    it "generates Turtle with isoiec80000:Unit type" do
+    it "generates Turtle with isq:Unit type" do
       u = Isq::Unit.new(
         id: "unit-m",
         pref_label: "metre",
@@ -215,7 +215,7 @@ RSpec.describe Isq do
         bindingness_type: "normative",
       )
       turtle = u.to_turtle
-      expect(turtle).to include("a isoiec80000:Unit")
+      expect(turtle).to include("a isq:Unit")
       expect(turtle).to include("skos:prefLabel")
       expect(turtle).to include("skos:notation")
     end
@@ -227,7 +227,7 @@ RSpec.describe Isq do
         notation: ["m"],
       )
       jsonld = u.to_jsonld
-      expect(jsonld).to include("isoiec80000:Unit")
+      expect(jsonld).to include("isq:Unit")
       expect(jsonld).to include("metre")
     end
 
@@ -250,17 +250,17 @@ RSpec.describe Isq do
       expect(Isq::MathConcept < SduSmart::TermEntry).to be true
     end
 
-    it "generates Turtle with isoiec80000:MathConcept type" do
+    it "generates Turtle with isq:MathConcept type" do
       mc = Isq::MathConcept.new(
         id: "t2-1.1",
         identifier: "2-1.1",
         pref_label: "number",
         definition: "object of thought",
         bindingness_type: "normative",
-        is_part_of: "isoiec80000:part-2",
+        is_part_of: "isq:part-2",
       )
       turtle = mc.to_turtle
-      expect(turtle).to include("a isoiec80000:MathConcept")
+      expect(turtle).to include("a isq:MathConcept")
       expect(turtle).to include("skos:definition")
     end
 
@@ -271,7 +271,7 @@ RSpec.describe Isq do
         definition: "object of thought",
       )
       jsonld = mc.to_jsonld
-      expect(jsonld).to include("isoiec80000:MathConcept")
+      expect(jsonld).to include("isq:MathConcept")
     end
 
     it "parses from YAML" do
@@ -325,7 +325,7 @@ RSpec.describe Isq do
       mc = Isq::MathConcept.from_yaml(yaml).first
       turtle = mc.to_turtle
 
-      expect(turtle).to include("a isoiec80000:MathConcept")
+      expect(turtle).to include("a isq:MathConcept")
       expect(turtle).to include("a skosxl:Label")
       expect(turtle).to include('skosxl:literalForm "conjunction"@en')
       expect(turtle).to include('skosxl:literalForm "p ^^ q"@en')

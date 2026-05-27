@@ -99,7 +99,7 @@ module Isq
         next unless data
 
         Isq::Unit.new(
-          id: ref.sub("isoiec80000:", ""),
+          id: ref.sub("isq:", ""),
           pref_label: data[:name],
           notation: data[:symbols],
           bindingness_type: "smart:normative",
@@ -135,7 +135,7 @@ module Isq
     def namespace_registry
       {
         smart: "https://w3id.org/standards/smart/ontologies/core/",
-        isoiec80000: "https://w3id.org/standards/isoiec80000/ontologies/core/",
+        isq: "https://w3id.org/standards/isq/ontologies/core/",
         dcterms: "http://purl.org/dc/terms/",
         skos: "http://www.w3.org/2004/02/skos/core#",
         skosxl: "http://www.w3.org/2008/05/skos-xl#",

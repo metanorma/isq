@@ -72,7 +72,7 @@ RSpec.describe Isq::Export do
         manifest = JSON.parse(File.read(File.join(tmpdir, "manifest.json")))
         expect(manifest["total_entries"]).to eq(1)
         expect(manifest["parts"]["3"]).to eq(1)
-        expect(manifest["namespaces"]).to include("smart", "isoiec80000")
+        expect(manifest["namespaces"]).to include("smart", "isq")
       end
     end
 
@@ -81,7 +81,7 @@ RSpec.describe Isq::Export do
         described_class.new(dataset: dataset, export_dir: tmpdir).run
 
         ttl = File.read(File.join(tmpdir, "iso80000-all.ttl"))
-        expect(ttl).to include("a isoiec80000:Quantity")
+        expect(ttl).to include("a isq:Quantity")
         expect(ttl).to include("a smart:PublicationDocument")
         expect(ttl).to include("a skosxl:Label")
       end
@@ -92,7 +92,7 @@ RSpec.describe Isq::Export do
         described_class.new(dataset: dataset, export_dir: tmpdir).run
 
         ttl = File.read(File.join(tmpdir, "iso80000-all.ttl"))
-        expect(ttl).to include("a isoiec80000:Unit")
+        expect(ttl).to include("a isq:Unit")
         expect(ttl).to include("metre")
         expect(ttl).to include('"m"')
       end

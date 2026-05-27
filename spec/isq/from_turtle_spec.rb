@@ -35,12 +35,12 @@ RSpec.describe "from_turtle round-trip" do
 
     it "preserves has_unit" do
       # from_turtle returns scalar for single-element collections; uri_reference predicates compact URIs back
-      expect(parsed.has_unit).to eq("isoiec80000:unit-m")
+      expect(parsed.has_unit).to eq("isq:unit-m")
     end
 
     it "round-trips scalar attributes back to Turtle" do
       ttl2 = parsed.to_turtle
-      expect(ttl2).to include("a isoiec80000:Quantity")
+      expect(ttl2).to include("a isq:Quantity")
       expect(ttl2).to include('dcterms:identifier "3-1.1"')
       expect(ttl2).to include('skos:definition "linear extent in space between any two points"')
       expect(ttl2).to include('skos:note "Length does not need to be measured along a straight line."')
@@ -72,7 +72,7 @@ RSpec.describe "from_turtle round-trip" do
 
     it "round-trips back to Turtle" do
       ttl2 = parsed.to_turtle
-      expect(ttl2).to include("a isoiec80000:MathConcept")
+      expect(ttl2).to include("a isq:MathConcept")
       expect(ttl2).to include('skos:definition "conjunction of p and q"')
     end
   end

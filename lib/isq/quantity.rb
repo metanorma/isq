@@ -40,15 +40,15 @@ module Isq
     end
 
     rdf do
-      namespace SduSmart::Rdf::Namespaces::IsoIec80000Namespace,
+      namespace SduSmart::Rdf::Namespaces::IsqNamespace,
                 SduSmart::Rdf::Namespaces::SmartNamespace,
                 Lutaml::Rdf::Namespaces::DctermsNamespace,
                 Lutaml::Rdf::Namespaces::SkosNamespace,
                 SduSmart::Rdf::Namespaces::SkosXlNamespace
 
-      subject { |m| "https://w3id.org/standards/isoiec80000/ontologies/core/#{m.id}" }
+      subject { |m| "https://w3id.org/standards/isq/ontologies/core/#{m.id}" }
 
-      type ["isoiec80000:Quantity", "smart:TermEntry"]
+      type ["isq:Quantity", "smart:TermEntry"]
 
       predicate :identifier,
                 namespace: Lutaml::Rdf::Namespaces::DctermsNamespace,
@@ -73,7 +73,7 @@ module Isq
                 lang_tagged: true
 
       predicate :hasUnit,
-                namespace: SduSmart::Rdf::Namespaces::IsoIec80000Namespace,
+                namespace: SduSmart::Rdf::Namespaces::IsqNamespace,
                 to: :has_unit,
                 uri_reference: true
 
@@ -104,10 +104,10 @@ module Isq
       refs = value.map do |u|
         sym = Array(u["symbol"]).first
         ref = if sym
-                "isoiec80000:unit-#{sym}"
+                "isq:unit-#{sym}"
               else
                 name = u["en"]&.downcase&.gsub(/\s+/, "-")
-                "isoiec80000:unit-#{name}" if name
+                "isq:unit-#{name}" if name
               end
         data[ref] = { name: u["en"], symbols: Array(u["symbol"]) } if ref
         ref

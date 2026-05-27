@@ -15,7 +15,7 @@ RSpec.describe "Export validation" do
     {
       "smart:hasSymbol" => "use skosxl:altLabel with smart:Term (termFormType: symbol) instead",
       "smart:hasDefinition" => "use skos:definition instead",
-      "smart:hasUnit" => "use isoiec80000:hasUnit instead",
+      "smart:hasUnit" => "use isq:hasUnit instead",
       "smart:hasRemark" => "use skos:note instead",
       "smart:hasDesignation" => "use skosxl:prefLabel instead",
       "smart:hasPart" => "use dcterms:hasPart instead",
@@ -31,17 +31,17 @@ RSpec.describe "Export validation" do
   describe "required types" do
     it "includes Quantity entries" do
       content = File.read(ttl_file)
-      expect(content).to include("isoiec80000:Quantity")
+      expect(content).to include("isq:Quantity")
     end
 
     it "includes MathConcept entries" do
       content = File.read(ttl_file)
-      expect(content).to include("isoiec80000:MathConcept")
+      expect(content).to include("isq:MathConcept")
     end
 
     it "includes Unit entries" do
       content = File.read(ttl_file)
-      expect(content).to include("isoiec80000:Unit")
+      expect(content).to include("isq:Unit")
     end
 
     it "includes PublicationDocument instances" do
@@ -60,7 +60,7 @@ RSpec.describe "Export validation" do
 
     it "Quantity entries have required predicates" do
       content = File.read(ttl_file)
-      expect(content).to include("isoiec80000:hasUnit")
+      expect(content).to include("isq:hasUnit")
       expect(content).to include("smart:hasBindingnessType")
     end
 
@@ -90,7 +90,7 @@ RSpec.describe "Export validation" do
       ctx = json["@context"]
 
       expect(ctx).to include("smart" => "https://w3id.org/standards/smart/ontologies/core/")
-      expect(ctx).to include("isoiec80000" => "https://w3id.org/standards/isoiec80000/ontologies/core/")
+      expect(ctx).to include("isq" => "https://w3id.org/standards/isq/ontologies/core/")
       expect(ctx).to include("dcterms")
       expect(ctx).to include("skos")
     end
@@ -99,10 +99,10 @@ RSpec.describe "Export validation" do
       json = JSON.parse(File.read(jsonld_file))
       graph = json["@graph"] || [json]
 
-      quantity_nodes = graph.select { |n| n["@type"]&.include?("isoiec80000:Quantity") }
+      quantity_nodes = graph.select { |n| n["@type"]&.include?("isq:Quantity") }
       expect(quantity_nodes.length).to be > 0
 
-      math_nodes = graph.select { |n| n["@type"]&.include?("isoiec80000:MathConcept") }
+      math_nodes = graph.select { |n| n["@type"]&.include?("isq:MathConcept") }
       expect(math_nodes.length).to be > 0
     end
 

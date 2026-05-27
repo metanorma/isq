@@ -53,14 +53,14 @@ RSpec.describe Isq::Export do
       expect(manifest["total_entries"]).to eq(dataset.total_count)
       expect(manifest["parts"]).to be_a(Hash)
       expect(manifest["generated"]).to be_a(String)
-      expect(manifest["namespaces"]).to include("smart", "isoiec80000")
+      expect(manifest["namespaces"]).to include("smart", "isq")
     end
 
     it "produces Turtle with domain class types" do
       described_class.new(dataset: dataset, export_dir: export_dir).run
 
       ttl = File.read(File.join(export_dir, "iso80000-all.ttl"))
-      expect(ttl).to include("a isoiec80000:Quantity")
+      expect(ttl).to include("a isq:Quantity")
       expect(ttl).to include("a skosxl:Label")
     end
 

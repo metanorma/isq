@@ -25,7 +25,7 @@ RSpec.describe "Unit round-trip" do
     )
 
     turtle = unit.to_turtle
-    expect(turtle).to include("a isoiec80000:Unit")
+    expect(turtle).to include("a isq:Unit")
     expect(turtle).to include('skos:prefLabel "metre"')
     expect(turtle).to include('skos:notation "m"')
   end
@@ -38,7 +38,7 @@ RSpec.describe "Unit round-trip" do
     )
 
     jsonld = unit.to_jsonld
-    expect(jsonld).to include("isoiec80000:Unit")
+    expect(jsonld).to include("isq:Unit")
     expect(jsonld).to include("metre")
   end
 

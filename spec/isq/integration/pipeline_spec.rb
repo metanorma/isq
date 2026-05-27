@@ -92,7 +92,7 @@ RSpec.describe "Full pipeline" do
       manifest = JSON.parse(File.read(File.join(export_dir, "manifest.json")))
       expect(manifest["total_entries"]).to eq(dataset.total_count)
       expect(manifest["generated"]).to match(/\d{4}-\d{2}-\d{2}T/)
-      expect(manifest["namespaces"]).to include("smart", "isoiec80000", "dcterms", "skos", "skosxl")
+      expect(manifest["namespaces"]).to include("smart", "isq", "dcterms", "skos", "skosxl")
     end
   end
 end
